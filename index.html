@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Handjet:wght@800&display=swap" rel="stylesheet">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sans A.I</title>
+</head><style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_Q6v2xs7uq8aFjSYqpsqLhMoTRrEMPz4yicaiXcVdhEKLwsDbUYh-eI8&s=10);
+            background-size: 100% 100%;
+            overflow: hidden;flex-direction: column;
+        align-items: center;padding-bottom:60px
+        }
+        #startButtonContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 5px;margin-top:auto}
+        
+#startButton {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        color: white;height: 180px;width:180px;
+        background: radial-gradient(circle, #1a03, blue);
+        border: 1px solid transparent;
+        border-radius: 48%;
+        padding: 20px;
+        cursor: pointer;
+        outline: none;
+        box-shadow: 0 0 30px rgba(26, 115, 232, 4.7);
+        transition: box-shadow 0.3s;
+        position: relative;font-size: 35px;font-family: 'Handjet', cursive;
+}#startButton:after{
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: inherit;
+            border: 8px solid floralwhite;
+            z-index: -1;
+            animation: borderGlow 5s linear infinite;
+        }
+        @keyframes borderGlow {
+            0% {
+                border-color: #ff0000; /* Red */
+            }
+            16% {
+                border-color: #ff7f00; /* Orange */
+            }
+            33% {
+                border-color: #ffff00; /* Yellow */
+            }
+            50% {
+                border-color: #00ff00; /* Green */
+            }
+            66% {
+                border-color: #0000ff; /* Blue */
+            }
+            83% {
+                border-color: #4b0082; /* Indigo */
+            }
+            100% {
+                border-color: #9400d3; /* Violet */
+            }
+        }
+
+        #startButton:active {
+            box-shadow: 0 0 30px rgba(26, 115, 232, 0.9);
+        }
+
+        #startButton:focus {
+            box-shadow: 0 0 30px rgba(26, 115, 232, 0.9);
+        }
+        
+    /* ... (your existing style content) ... */
+#questionContainer {
+        display: flex;
+        
+        align-items: ;
+        margin-top: auto;
+        margin-bottom: 75px
+    }
+    #questionInput {
+        font-family: 'Handjet', cursive;
+        font-size: 24px;
+        color: white;
+        background: radial-gradient(circle, #1a03, blue);
+        border: 5px solid transparent;
+        border-radius: 50px;
+        padding: 10px 20px;
+        outline: none;
+        box-shadow: 0 0 20px rgba(26, 115, 232, 0.7);
+        transition: box-shadow 0.3s;
+        width: 200px;
+        margin-bottom: 10px;border-bottom-right-radius: 0px;border-top-right-radius: 0px
+    }#questionInput:hover {
+            box-shadow: 0 0 30px rgba(26, 115, 232, 0.9);
+    }
+    #askButton {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        color: black;
+        background: radial-gradient(circle, #1a03, blue);
+        border: 5px solid transparent;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        outline: none;
+        box-shadow: 0 0 20px rgba(26, 115, 232, 0.7);
+        transition: box-shadow 0.3s;font-family: 'Handjet', cursive;
+        font-size: 24px;
+        color: white;
+        background: radial-gradient(circle, #1a03, blue);
+        border: 5px solid transparent;
+        border-radius: 40px;
+        padding: 10px 20px;
+        outline: none;
+        box-shadow: 0 0 20px rgba(26, 115, 232, 0.7);
+        transition: box-shadow 0.3s;
+        width: 80px;
+        margin-bottom: 10px;border-bottom-left-radius: 0px;border-top-left-radius: 0px
+    }
+    #askButton:active {
+        box-shadow: 0 0 30px rgba(26, 115, 232, 0.9);
+    }
+    #askButton:focus {
+        box-shadow: 0 0 30px rgba(26, 115, 232, 0.9);
+    }
+    
+        </style>
+<body>
+  <div id="startButtonContainer">
+    <button id="startButton">PRESS</button></div><br>
+         <div id="questionContainer">
+                 <input id="questionInput" type="text" placeholder="Type your question here">
+                 <button id="askButton">ASK</button>
+         
+    </div>
+    <script>
+        let recognition;
+
+        document.getElementById('startButton').addEventListener('click', function() {
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+
+                // Set the language for speech recognition (you can change it to your preferred language)
+                recognition.lang = 'en-IN';
+
+                recognition.onresult = function(event) {
+                    const result = event.results[0][0].transcript.trim();
+                    respondToQuestion(result);
+                };
+
+                recognition.onend = function() {
+                    // Restart recognition after it stops (to keep it listening continuously)
+                    recognition.start();
+                };
+
+                // Start recognition
+                recognition.start();
+            } else {
+                alert('Sorry, your browser does not support the Speech Recognition API.');
+            }
+        });
+
+        function respondToQuestion(question) {
+            let response;
+
+            if (question.toLowerCase().includes('hello')) {
+                response = 'Hello,sir how can I help you?';
+            } else if (question.toLowerCase().includes('how are you')) {
+                response = "I'm Fine sir and you";
+            } else if (question.toLowerCase().includes('have you eaten food')) {
+                response = "I Don't need any food sir .i need only Internet. have you eaten food sir ?";
+            }else if (question.toLowerCase().includes('do you have friend or family')) {
+                    response = "No sir. but i have you";
+            }else if (question.toLowerCase().includes('where is my pen')) {
+                    response = "pen may be in your school beg or other place sir";
+            } else if (question.toLowerCase().includes('where is my bag')) {
+                    response = "Bag may be on the table";
+            }else if (question.toLowerCase().includes('do you have friend or family')) {
+                    response = "No sir. but i have you";
+            }else if (question.toLowerCase().includes('where is my pen')) {
+                    response = "pen may be in your school beg or other place sir";
+            } else if (question.toLowerCase().includes('who are you')) {
+                    response = "I am Sans A.I";
+            }else if (question.toLowerCase().includes('do you have friend or family')) {
+                    response = "No sir. but i have you";
+            } else if (question.toLowerCase().includes('where is my pen')) {
+                    response = "pen may be in your school beg or other place sir";
+            } else if (question.toLowerCase().includes('who am i')) {
+                    response = "you are my sir";
+            }else if (question.toLowerCase().includes('Do you have friend or family')) {
+                    response = "No sir. but i have you";
+            } else if (question.toLowerCase().includes('where is my pen')) {
+                    response = "pen may be in your school beg or other place sir";
+            } else if (question.toLowerCase().includes('who made you')) {
+                    response = "Mr king made me sir ";
+            }else if (question.toLowerCase().includes('where is remote')) {
+                    response = "remote may be inside the pillow or right side the blutooth box sir";
+            }else if (question.toLowerCase().includes('what should i wear')) {
+                    response = "sir you can wear t-shirt or shirt and trouser or pants sir";
+            }else if (question.toLowerCase().includes('should i do cycling now')) {
+                    response = "If it's morning or evening yes you can. otherwise you can't sir";
+            }else if (question.toLowerCase().includes('i am fine')) {
+                    response = "answer me sir that you need";
+            }else if (question.toLowerCase().includes('what time is going on')) {
+                    const currentTime = getCurrentTime();
+                    response = `${currentTime}, sir.`;
+            }else if (question.toLowerCase().includes('open youtube')) {
+                response = 'Opening YouTube, sir.';
+                window.open('https://www.youtube.com/', '_blank'); // Open YouTube in a new tab
+            } else if (question.toLowerCase().includes('open facebook')) {
+                response = 'Opening Facebook, sir.';
+                window.open('https://www.facebook.com/', '_blank'); // Open Facebook in a new tab
+            } else if (question.toLowerCase().includes('open whatsapp')) {
+                response = 'Opening WhatsApp, sir.';
+                window.open('https://web.whatsapp.com/', '_blank'); // Open WhatsApp Web in a new tab
+            }else if (question.toLowerCase().includes('open wikipedia')) {
+                    response = 'Opening Wikipedia, sir.';
+                    window.open('https://www.wikipedia.org/', '_blank'); // Open WhatsApp Web in a new tab
+            }
+            else if (question.toLowerCase().startsWith('repeat')) {
+    const yourWord = question.slice('repeat'.length).trim();
+    response = `${yourWord}`;
+}
+else if (question.toLowerCase().includes('find my device')) {
+                    response = 'Finding device sir,';
+                    window.open('https://www.google.com/android/find/u/8/', '_blank'); // Open WhatsApp Web in a new tab
+            }else if (question.toLowerCase().includes('open chat G.P.T')) {
+                    response = 'opening chat G.P.T,sir';
+                    window.open('https://chat.openai.com/', '_blank'); // Open WhatsApp Web in a new tab
+            }else if (question.toLowerCase().startsWith('open ')) {
+                    const appName = question.substring('open '.length).trim();
+                    response = `Opening ${appName}, sir.`;
+                    window.open(`https://play.google.com/store/search?q=${encodeURIComponent(appName)}`, '_blank');
+            }else if (question.toLowerCase().startsWith('download ')) {
+                    const appName = question.substring('download '.length).trim();
+                    response = `downloading ${appName}, sir.`;
+                    window.open(`https://play.google.com/store/search?q=${encodeURIComponent(appName)}`, '_blank');
+            }else if (question.toLowerCase().startsWith('flipkart')) {
+                    const searchQuery = question.substring('flipkart'.length).trim();
+                    response = 'Searching with Flipkart, sir.';
+                    window.open(`https://www.flipkart.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
+            
+            }else if (question.toLowerCase() === 'flip a coin') {
+                    const coinResult = Math.random() < 0.5 ? 'Head' : 'Tail';
+                    response = `The coin landed on ${coinResult}.`;
+            }else if (question.toLowerCase().startsWith('amazon')) {
+                    const searchQuery = question.substring('amazon'.length).trim();
+                    response = 'Searching with Amazon, sir.';
+                    window.open(`https://www.amazon.in/s?k=${encodeURIComponent(searchQuery)}`, '_blank');
+            
+            }else if (question.toLowerCase().startsWith('youtube')) {
+                const searchQuery = question.substring('youtube'.length).trim();
+                response = 'Searching with YouTube, sir.';
+                window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`, '_blank');
+                
+            } else if (question.toLowerCase().startsWith('today news')) {
+                    const searchQuery = question.substring('today news'.length).trim();
+                    response = 'Searching with Google news, sir.';
+                    window.open(`https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en=${encodeURIComponent(searchQuery)}`, '_blank');
+            
+            }else if (question.toLowerCase().startsWith('who is ')) {
+                const searchTerm = question.substring('who is '.length).trim();
+                response = 'Searching with Wikipedia, sir.';
+                window.open(`https://en.wikipedia.org/wiki/${encodeURIComponent(searchTerm)}`, '_blank');
+            } else if (question.toLowerCase().startsWith('who invent')) {
+                    const searchTerm = question.substring('who invent '.length).trim();
+                    response = 'Searching with Wikipedia, sir.';
+                    window.open(`https://en.wikipedia.org/wiki/${encodeURIComponent(searchTerm)}`, '_blank');
+            }else if (question.toLowerCase().startsWith('what is ')) {
+                const searchTerm = question.substring('what is '.length).trim();
+                response = 'Searching with Wikipedia, sir.';
+                window.open(`https://en.wikipedia.org/wiki/${encodeURIComponent(searchTerm)}`, '_blank');
+            }else if (question.toLowerCase().startsWith('calculate ')) {
+                    const expression = question.substring('calculate '.length).trim();
+                    try {
+                            const result = eval(expression);
+                            response = `${result}, sir.`;
+                    } catch (error) {
+                            response = "I'm sorry, but I couldn't calculate that.";
+                    }
+            }else if (question.toLowerCase().includes('what date is today')) {
+                const currentDate = new Date().toLocaleDateString('en-IN');
+                response = `Today is ${currentDate}, sir.`;
+            }else if (question.toLowerCase().startsWith('send message to sanket')) {
+                    const message = encodeURIComponent(question.substring('send message to sanket'.length).trim());
+                    const phoneNumber = '8447386590'; // Replace this with the recipient's phone number
+                    const whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
+                    window.open(whatsappLink, '_blank');
+                    response = 'Sending message to Sanket, sir.';
+            }else if (question.toLowerCase().startsWith('play ') && question.toLowerCase().endsWith(' song')) {
+                const songName = question.substring('play '.length, question.length - ' song'.length).trim();
+                searchAndPlaySong(songName);
+            }else if (question.toLowerCase().startsWith('send message to mummy')) {
+                    const message = encodeURIComponent(question.substring('send message to mummy'.length).trim());
+                    const phoneNumber = '8851576932'; // Replace this with the recipient's phone number
+                    const whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
+                    window.open(whatsappLink, '_blank');
+                    response = 'Sending message to mummy, sir.';
+            }else if (question.toLowerCase().startsWith('send message to papa')) {
+                    const message = encodeURIComponent(question.substring('send message to papa'.length).trim());
+                    const phoneNumber = '7827389593'; // Replace this with the recipient's phone number
+                    const whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
+                    window.open(whatsappLink, '_blank');
+                    response = 'Sending message to papa, sir.';
+            }else if (question.toLowerCase().includes('wake up')) {
+                    const currentTime = new Date().getHours();
+                    if (currentTime >= 5 && currentTime < 12) {
+                            response = 'Good morning, sir.';
+                    } else if (currentTime >= 12 && currentTime < 17) {
+                            response = 'Good afternoon, sir.';
+                    } else if (currentTime >= 17 && currentTime < 21) {
+                            response = 'Good evening, sir.';
+                    } else {
+                            response = 'Good night, sir.';
+                    }
+            }
+            else if (question.toLowerCase().startsWith('where is ')) {
+                const locationName = question.substring('where is '.length).trim();
+                searchOnGoogleMaps(locationName);
+            }
+            else if (question.toLowerCase().startsWith('what the weather of ')) {
+                    const location = question.substring('what the weather of '.length).trim();
+                    getWeather(location);
+            }
+            else {
+                response = 'Searching with Google, sir.';
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(question)}`, '_blank');
+            }
+
+            speak(response);
+        }
+function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            return `${formattedHours}:${formattedMinutes} ${ampm}`;
+        }
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-IN';
+            speechSynthesis.speak(utterance);
+        }function searchOnGoogleMaps(locationName) {
+            const searchTerm = `where is ${locationName}`;
+            const searchQuery = searchTerm.substring('where is '.length).trim();
+            const response = `Searching on Google Maps for ${searchQuery}.`;
+            window.open(`https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}`, '_blank');
+            speak(response);
+        }
+        function getWeather(location) {
+                fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=metric&key=GBDFXBGMTTGEBT2X5M2CWRYSR&contentType=json`)
+                        .then(response => {
+                                if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                        })
+                        .then(data => {
+                                const temp = data.currentConditions.temp;
+                                response = `The temperature in ${location} is ${temp}°C`;
+                                speak(response);
+                        })
+                        .catch(error => {
+                                console.error('Fetch error: ', error);
+                                response = 'Unable to fetch temperature data.';
+                                speak(response);
+                        });
+        }
+        function speak(text) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-IN';
+                speechSynthesis.speak(utterance);
+        }
+        function searchAndPlaySong(songName) {
+            const searchTerm = `play ${songName} song`;
+            const searchQuery = searchTerm.substring('play'.length).trim();
+            const response = `Searching on YouTube for ${searchQuery}. Please click on the desired video to play it.`;
+            window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`, '_blank');
+            speak(response);
+        }
+        
+document.getElementById('askButton').addEventListener('click', function() {
+    const questionInput = document.getElementById('questionInput');
+    const question = questionInput.value;
+    if (question) {
+        respondToQuestion(question);
+        questionInput.value = ''; // Clear the input field
+    }
+});
+
+document.getElementById('questionInput').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        const questionInput = document.getElementById('questionInput');
+        const question = questionInput.value;
+        if (question) {
+            respondToQuestion(question);
+            questionInput.value = ''; // Clear the input field
+        }
+    }
+});
+
+// ... (the rest of your existing script code) ...
+
+
+       </script>
+</body>
+</html>
